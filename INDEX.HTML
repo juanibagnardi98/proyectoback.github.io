@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce-JIB</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/products-client.js"></script>
+</head>
+<body>
+    <h1>Productos</h1>
+    <div class="products">
+        <div class="product">
+            <h3>Televisor</h3>
+            <p>Precio: $250.000</p>
+            <button class="add-to-cart" data-id="1">Agregar al carrito</button>
+        </div>
+        <div class="product">
+            <h3>Teléfono</h3>
+            <p>Precio: $180.000</p>
+            <button class="add-to-cart" data-id="2">Agregar al carrito</button>
+        </div>
+        <div class="product">
+            <h3>Computadora</h3>
+            <p>Precio: $280.000</p>
+            <button class="add-to-cart" data-id="3">Agregar al carrito</button>
+        </div>
+        <div class="product">
+            <h3>Notebook</h3>
+            <p>Precio: $220.000</p>
+            <button class="add-to-cart" data-id="4">Agregar al carrito</button>
+        </div>
+    </div>
+    
+    <h1>Carritos</h1>
+    <div class="shopping-cart">
+        <div class="cart-handle"></div>
+        <div class="cart-body">
+            <p>Carrito de compras</p>
+            <ul class="cart-items">
+                <!-- Items del carrito irían aquí -->
+            </ul>
+        </div>
+        <div class="cart-wheels">
+            <div class="wheel"></div>
+            <div class="wheel"></div>
+        </div>
+    </div>
+</body>
+</html>

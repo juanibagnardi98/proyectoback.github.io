@@ -1,0 +1,25 @@
+<%- include('partials/header') %>
+
+<section class="page-header">
+  <h1>Detalle del Producto</h1>
+</section>
+
+<article class="product-detail">
+  <h2><%= product.title %></h2>
+  <p><strong>Precio:</strong> $<%= product.price %></p>
+  <p><strong>Categoría:</strong> <%= product.category %></p>
+  <p><strong>Stock:</strong> <%= product.stock %></p>
+  <p><strong>Disponible:</strong> <%= product.status ? 'Sí' : 'No' %></p>
+  <p><strong>Código:</strong> <%= product.code %></p>
+  <p><%= product.description %></p>
+  <% if (product.thumbnails && product.thumbnails.length) { %>
+    <div class="thumbnails">
+      <% product.thumbnails.forEach(src => { %>
+        <img src="<%= src %>" alt="Miniatura" />
+      <% }); %>
+    </div>
+  <% } %>
+  <button class="button add-to-cart" data-id="<%= product._id %>">Agregar al carrito</button>
+</article>
+
+<%- include('partials/footer') %>

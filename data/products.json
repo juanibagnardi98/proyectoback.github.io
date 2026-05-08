@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Test Producto",
+    "description": "Descripci�n de prueba",
+    "code": "TP100",
+    "price": 99.99,
+    "status": true,
+    "stock": 10,
+    "category": "Test",
+    "thumbnails": [
+      "https://placehold.co/100"
+    ],
+    "_id": "e1e78d77-fe27-404c-8111-df9c37672f55",
+    "createdAt": "2026-05-02T05:52:43.357Z"
+  }
+]

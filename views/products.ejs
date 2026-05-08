@@ -1,0 +1,69 @@
+<%- include('partials/header') %>
+
+<section class="page-header">
+  <h1>Listado de Productos</h1>
+</section>
+
+<section class="filters">
+  <form method="get" action="/products">
+    <label>
+      Categoría:
+      <input type="text" name="category" value="<%= query.category || '' %>" />
+    </label>
+    <label>
+      Disponible:
+      <select name="status">
+        <option value="">Todos</option>
+        <option value="true" <%= query.status === 'true' ? 'selected' : '' %>>Sí</option>
+        <option value="false" <%= query.status === 'false' ? 'selected' : '' %>>No</option>
+      </select>
+    </label>
+    <label>
+      Ordenar precio:
+      <select name="sort">
+        <option value="">Sin ordenar</option>
+        <option value="asc" <%= query.sort === 'asc' ? 'selected' : '' %>>Menor a mayor</option>
+        <option value="desc" <%= query.sort === 'desc' ? 'selected' : '' %>>Mayor a menor</option>
+      </select>
+    </label>
+    <label>
+      Límite:
+      <input type="number" name="limit" value="<%= query.limit || 10 %>" min="1" />
+    </label>
+    <button type="submit">Filtrar</button>
+  </form>
+</section>
+
+<section class="product-grid">
+  <% products.forEach(product => { %>
+    <article class="product-card">
+      <h2><%= product.title %></h2>
+      <p><strong>Precio:</strong> $<%= product.price %></p>
+      <p><strong>Categoría:</strong> <%= product.category %></p>
+      <p><strong>Stock:</strong> <%= product.stock %></p>
+      <p><strong>Disponible:</strong> <%= product.status ? 'Sí' : 'No' %></p>
+      <p><%= product.description %></p>
+      <div class="card-actions">
+        <a class="button" href="/products/<%= product._id %>">Ver detalle</a>
+        <button class="button add-to-cart" data-id="<%= product._id %>">Agregar al carrito</button>
+      </div>
+    </article>
+  <% }); %>
+</section>
+
+<nav class="pagination">
+  <% if (pagination.hasPrevPage) { %>
+    <a href="<%= pagination.prevLink %>">Anterior</a>
+  <% } else { %>
+    <span>Anterior</span>
+  <% } %>
+
+  <span>Página <%= pagination.page %> de <%= pagination.totalPages %></span>
+
+  <% if (pagination.hasNextPage) { %>
+    <a href="<%= pagination.nextLink %>">Siguiente</a>
+  <% } else { %>
+    <span>Siguiente</span>
+  <% } %>
+</nav>
+<%- include('partials/footer') %>
