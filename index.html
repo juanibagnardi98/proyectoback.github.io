@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ecommerce - Tienda Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        header {
+            background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+            color: white;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        nav h1 {
+            font-size: 1.8rem;
+            margin: 0;
+        }
+
+        nav a,
+        nav button {
+            color: #f3f4f6;
+            text-decoration: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            background: transparent;
+            font-size: 1rem;
+        }
+
+        nav a:hover,
+        nav button:hover {
+            background: #2563eb;
+            border-color: #1d4ed8;
+        }
+
+        nav a.active {
+            background: #2563eb;
+            border-color: #1d4ed8;
+        }
+
+        .cart-badge {
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .page-header {
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 3px solid #2563eb;
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #111827;
+        }
+
+        /* Sección de Filtros */
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .filters form {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filters label {
+            display: flex;
+            flex-direction: column;
+            font-weight: 500;
+            gap: 0.3rem;
+        }
+
+        .filters input,
+        .filters select {
+            padding: 0.7rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .filters input:focus,
+        .filters select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .filters button {
+            padding: 0.7rem 1.5rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .filters button:hover {
+            background: #1d4ed8;
+        }
+
+        /* Grid de Productos */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .product-card,
+        .product-detail,
+        .cart-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .product-card h2,
+        .product-detail h2 {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: #111827;
+        }
+
+        .product-card p,
+        .product-detail p {
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .product-card strong {
+            color: #374151;
+            font-weight: 600;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            padding: 0.7rem 1.2rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .button:hover {
+            background: #1d4ed8;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .button.secondary {
+            background: #6b7280;
+        }
+
+        .button.secondary:hover {
+            background: #4b5563;
+        }
+
+        .button.danger {
+            background: #ef4444;
+        }
+
+        .button.danger:hover {
+            background: #dc2626;
+        }
+
+        /* Paginación */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            align-items: center;
+            padding: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .pagination a,
+        .pagination button {
+            padding: 0.7rem 1rem;
+            background: white;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .pagination a:hover,
+        .pagination button:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* Detalle del Producto */
+        .product-detail {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .product-detail h2 {
+            font-size: 2rem;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 1rem;
+        }
+
+        .product-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .info-item {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .info-item label {
+            font-weight: 600;
+            color: #374151;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-item value {
+            font-size: 1.1rem;
+            color: #1f2937;
+        }
+
+        .thumbnails {
+            display: flex;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .thumbnails img {
+            max-width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Carrito */
+        .cart-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6b7280;
+        }
+
+        .cart-empty svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        .cart-table thead {
+            background: #f3f4f6;
+        }
+
+        .cart-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .cart-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .cart-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: flex-end;
+            gap: 2rem;
+            padding: 1.5rem 0;
+            border-top: 2px solid #e5e7eb;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .cart-total .amount {
+            color: #2563eb;
+            font-size: 1.5rem;
+        }
+
+        .cart-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        footer {
+            background: #111827;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .filters form {
+                flex-direction: column;
+            }
+
+            .filters label {
+                width: 100%;
+            }
+
+            .product-info {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav a,
+            nav button {
+                width: 100%;
+            }
+
+            .cart-table {
+                font-size: 0.9rem;
+            }
+
+            .cart-table th,
+            .cart-table td {
+                padding: 0.5rem;
+            }
+        }
+
+        .status-available {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .status-unavailable {
+            color: #ef4444;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>🛍️ Tienda Online</h1>
+            <div>
+                <button class="nav-btn" data-section="products">Productos</button>
+                <button class="nav-btn" data-section="cart">
+                    Carrito <span class="cart-badge" id="cart-count">0</span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Sección: Listado de Productos -->
+        <section id="products" class="section active">
+            <div class="page-header">
+                <h1>Catálogo de Productos</h1>
+                <p>Explora nuestro amplio catálogo de productos de calidad</p>
+            </div>
+
+            <div class="filters">
+                <form id="filter-form">
+                    <label>
+                        Categoría:
+                        <input type="text" id="filter-category" placeholder="Ej: Electrónica" />
+                    </label>
+                    <label>
+                        Disponible:
+                        <select id="filter-status">
+                            <option value="">Todos</option>
+                            <option value="true">Disponible</option>
+                            <option value="false">No disponible</option>
+                        </select>
+                    </label>
+                    <label>
+                        Ordenar precio:
+                        <select id="filter-sort">
+                            <option value="">Sin ordenar</option>
+                            <option value="asc">Menor a mayor</option>
+                            <option value="desc">Mayor a menor</option>
+                        </select>
+                    </label>
+                    <label>
+                        Límite:
+                        <input type="number" id="filter-limit" value="10" min="1" />
+                    </label>
+                    <button type="submit">Filtrar</button>
+                </form>
+            </div>
+
+            <div class="product-grid" id="product-grid">
+                <!-- Los productos se cargarán dinámicamente aquí -->
+            </div>
+
+            <div class="pagination" id="pagination">
+                <!-- Paginación se cargará dinámicamente aquí -->
+            </div>
+        </section>
+
+        <!-- Sección: Detalle del Producto -->
+        <section id="product-detail" class="section">
+            <div class="page-header">
+                <h1 id="detail-back">← Volver a Productos</h1>
+            </div>
+
+            <div class="product-detail" id="product-detail-container">
+                <!-- Detalle del producto se cargará dinámicamente aquí -->
+            </div>
+        </section>
+
+        <!-- Sección: Carrito -->
+        <section id="cart" class="section">
+            <div class="page-header">
+                <h1>Mi Carrito de Compras</h1>
+            </div>
+
+            <div class="cart-container">
+                <div id="cart-content">
+                    <!-- Contenido del carrito se cargará dinámicamente aquí -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Tienda Online. Todos los derechos reservados.</p>
+        <p>Desarrollado con HTML5, CSS3 y JavaScript</p>
+    </footer>
+
+    <script>
+        // Datos de ejemplo (en una aplicación real, vendrían del servidor)
+        const productsData = [
+            {
+                _id: '1',
+                title: 'Laptop Gaming',
+                price: 1200,
+                category: 'Electrónica',
+                stock: 5,
+                status: true,
+                code: 'LG001',
+                description: 'Laptop de alta rendimiento para gaming con procesador Intel i7, 16GB RAM y tarjeta gráfica RTX 3070.',
+                thumbnails: ['https://via.placeholder.com/200?text=Laptop+1', 'https://via.placeholder.com/200?text=Laptop+2']
+            },
+            {
+                _id: '2',
+                title: 'Mouse Inalámbrico',
+                price: 45,
+                category: 'Accesorios',
+                stock: 20,
+                status: true,
+                code: 'MA002',
+                description: 'Mouse inalámbrico de precisión con batería de larga duración.',
+                thumbnails: []
+            },
+            {
+                _id: '3',
+                title: 'Teclado Mecánico RGB',
+                price: 150,
+                category: 'Accesorios',
+                stock: 0,
+                status: false,
+                code: 'TM003',
+                description: 'Teclado mecánico con iluminación RGB personalizable.',
+                thumbnails: []
+            },
+            {
+                _id: '4',
+                title: 'Monitor 4K 27"',
+                price: 450,
+                category: 'Electrónica',
+                stock: 8,
+                status: true,
+                code: 'MO004',
+                description: 'Monitor UltraHD 4K con panel IPS y tiempo de respuesta ultra rápido.',
+                thumbnails: []
+            },
+            {
+                _id: '5',
+                title: 'Auriculares Gamer',
+                price: 120,
+                category: 'Accesorios',
+                stock: 15,
+                status: true,
+                code: 'AU005',
+                description: 'Auriculares con sonido envolvente 7.1 y micrófono cancelador de ruido.',
+                thumbnails: []
+            },
+            {
+                _id: '6',
+                title: 'Webcam 1080p',
+                price: 80,
+                category: 'Accesorios',
+                stock: 12,
+                status: true,
+                code: 'WC006',
+                description: 'Cámara web Full HD con enfoque automático y corrección de luz.',
+                thumbnails: []
+            }
+        ];
+
+        // Estado de la aplicación
+        let cart = [];
+        let currentPage = 1;
+        let currentFilters = {};
+
+        // Elementos del DOM
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.section');
+        const productGrid = document.getElementById('product-grid');
+        const pagination = document.getElementById('pagination');
+        const filterForm = document.getElementById('filter-form');
+        const detailBack = document.getElementById('detail-back');
+        const cartContent = document.getElementById('cart-content');
+        const cartCount = document.getElementById('cart-count');
+
+        // Event Listeners para navegación
+        navButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const sectionId = e.target.dataset.section;
+                showSection(sectionId);
+            });
+        });
+
+        detailBack.addEventListener('click', () => {
+            showSection('products');
+        });
+
+        filterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            currentPage = 1;
+            applyFilters();
+        });
+
+        // Función para mostrar sección
+        function showSection(sectionId) {
+            sections.forEach(section => section.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+
+            // Actualizar botones activos
+            navButtons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-section="${sectionId}"]`)?.classList.add('active');
+
+            // Cargar contenido según la sección
+            if (sectionId === 'products') {
+                renderProducts();
+            } else if (sectionId === 'cart') {
+                renderCart();
+            }
+        }
+
+        // Función para aplicar filtros
+        function applyFilters() {
+            currentFilters = {
+                category: document.getElementById('filter-category').value,
+                status: document.getElementById('filter-status').value,
+                sort: document.getElementById('filter-sort').value,
+                limit: parseInt(document.getElementById('filter-limit').value)
+            };
+            renderProducts();
+        }
+
+        // Función para filtrar productos
+        function getFilteredProducts() {
+            let filtered = [...productsData];
+
+            if (currentFilters.category) {
+                filtered = filtered.filter(p =>
+                    p.category.toLowerCase().includes(currentFilters.category.toLowerCase())
+                );
+            }
+
+            if (currentFilters.status) {
+                filtered = filtered.filter(p => p.status === (currentFilters.status === 'true'));
+            }
+
+            if (currentFilters.sort === 'asc') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (currentFilters.sort === 'desc') {
+                filtered.sort((a, b) => b.price - a.price);
+            }
+
+            return filtered;
+        }
+
+        // Función para renderizar productos
+        function renderProducts() {
+            const filtered = getFilteredProducts();
+            const limit = currentFilters.limit || 10;
+            const totalPages = Math.ceil(filtered.length / limit);
+            const startIdx = (currentPage - 1) * limit;
+            const endIdx = startIdx + limit;
+            const products = filtered.slice(startIdx, endIdx);
+
+            productGrid.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <h2>${product.title}</h2>
+                    <p><strong>Precio:</strong> $${product.price}</p>
+                    <p><strong>Categoría:</strong> ${product.category}</p>
+                    <p><strong>Stock:</strong> ${product.stock}</p>
+                    <p>
+                        <strong>Disponible:</strong>
+                        <span class="${product.status ? 'status-available' : 'status-unavailable'}">
+                            ${product.status ? 'Sí' : 'No'}
+                        </span>
+                    </p>
+                    <p>${product.description}</p>
+                    <div class="card-actions">
+                        <button class="button view-detail" data-id="${product._id}">Ver detalle</button>
+                        <button class="button add-to-cart" data-id="${product._id}" ${!product.status ? 'disabled' : ''}>
+                            Agregar al carrito
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Event listeners para botones
+            document.querySelectorAll('.view-detail').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const productId = e.target.dataset.id;
+                    showProductDetail(productId);
+                });
+            });
+
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const productId = e.target.dataset.id;
+                    addToCart(productId);
+                    e.target.textContent = 'Producto agregado ✓';
+                    setTimeout(() => {
+                        e.target.textContent = 'Agregar al carrito';
+                    }, 1200);
+                });
+            });
+
+            // Renderizar paginación
+            renderPagination(totalPages);
+        }
+
+        // Función para renderizar paginación
+        function renderPagination(totalPages) {
+            let paginationHTML = '';
+
+            if (currentPage > 1) {
+                paginationHTML += `<button class="page-btn" onclick="goToPage(${currentPage - 1})">Anterior</button>`;
+            }
+
+            paginationHTML += `<span>Página ${currentPage} de ${totalPages}</span>`;
+
+            if (currentPage < totalPages) {
+                paginationHTML += `<button class="page-btn" onclick="goToPage(${currentPage + 1})">Siguiente</button>`;
+            }
+
+            pagination.innerHTML = paginationHTML;
+        }
+
+        // Función para ir a una página
+        function goToPage(page) {
+            currentPage = page;
+            renderProducts();
+            window.scrollTo(0, 0);
+        }
+
+        // Función para mostrar detalle del producto
+        function showProductDetail(productId) {
+            const product = productsData.find(p => p._id === productId);
+            if (!product) return;
+
+            const detailContainer = document.getElementById('product-detail-container');
+            detailContainer.innerHTML = `
+                <div class="product-detail">
+                    <h2>${product.title}</h2>
+                    <div class="product-info">
+                        <div class="info-item">
+                            <label>Precio</label>
+                            <value>$${product.price}</value>
+                        </div>
+                        <div class="info-item">
+                            <label>Categoría</label>
+                            <value>${product.category}</value>
+                        </div>
+                        <div class="info-item">
+                            <label>Stock</label>
+                            <value>${product.stock}</value>
+                        </div>
+                        <div class="info-item">
+                            <label>Disponibilidad</label>
+                            <value class="${product.status ? 'status-available' : 'status-unavailable'}">
+                                ${product.status ? 'Disponible' : 'No disponible'}
+                            </value>
+                        </div>
+                        <div class="info-item">
+                            <label>Código</label>
+                            <value>${product.code}</value>
+                        </div>
+                        <div class="info-item">
+                            <label>Stock Total</label>
+                            <value>${product.stock} unidades</value>
+                        </div>
+                    </div>
+                    <div>
+                        <strong>Descripción:</strong>
+                        <p>${product.description}</p>
+                    </div>
+                    ${product.thumbnails && product.thumbnails.length ? `
+                        <div>
+                            <strong>Imágenes:</strong>
+                            <div class="thumbnails">
+                                ${product.thumbnails.map(src => `<img src="${src}" alt="Producto" />`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    <div class="card-actions">
+                        <button class="button add-to-cart" data-id="${product._id}" ${!product.status ? 'disabled' : ''}>
+                            Agregar al carrito
+                        </button>
+                        <button class="button secondary" onclick="showSection('products')">Volver a productos</button>
+                    </div>
+                </div>
+            `;
+
+            const addBtn = detailContainer.querySelector('.add-to-cart');
+            if (addBtn && product.status) {
+                addBtn.addEventListener('click', () => {
+                    addToCart(product._id);
+                    addBtn.textContent = 'Producto agregado ✓';
+                    setTimeout(() => {
+                        addBtn.textContent = 'Agregar al carrito';
+                    }, 1200);
+                });
+            }
+
+            showSection('product-detail');
+        }
+
+        // Función para agregar al carrito
+        function addToCart(productId) {
+            const product = productsData.find(p => p._id === productId);
+            if (!product || !product.status) return;
+
+            const existingItem = cart.find(item => item.product._id === productId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    product: product,
+                    quantity: 1
+                });
+            }
+
+            updateCartCount();
+            saveCart();
+        }
+
+        // Función para remover del carrito
+        function removeFromCart(productId) {
+            cart = cart.filter(item => item.product._id !== productId);
+            updateCartCount();
+            renderCart();
+            saveCart();
+        }
+
+        // Función para actualizar cantidad
+        function updateQuantity(productId, quantity) {
+            const item = cart.find(item => item.product._id === productId);
+            if (item) {
+                item.quantity = Math.max(1, quantity);
+                updateCartCount();
+                renderCart();
+                saveCart();
+            }
+        }
+
+        // Función para vaciar carrito
+        function emptyCart() {
+            if (confirm('¿Estás seguro de que deseas vaciar el carrito?')) {
+                cart = [];
+                updateCartCount();
+                renderCart();
+                saveCart();
+            }
+        }
+
+        // Función para actualizar contador del carrito
+        function updateCartCount() {
+            const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = total;
+        }
+
+        // Función para guardar carrito en localStorage
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // Función para cargar carrito desde localStorage
+        function loadCart() {
+            const saved = localStorage.getItem('cart');
+            if (saved) {
+                cart = JSON.parse(saved);
+                updateCartCount();
+            }
+        }
+
+        // Función para renderizar carrito
+        function renderCart() {
+            if (cart.length === 0) {
+                cartContent.innerHTML = `
+                    <div class="cart-empty">
+                        <div style="font-size: 3rem;">🛒</div>
+                        <h2>Tu carrito está vacío</h2>
+                        <p>Agrega productos para comenzar a comprar</p>
+                        <button class="button" onclick="showSection('products')">Continuar comprando</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const total = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+
+            cartContent.innerHTML = `
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Subtotal</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${cart.map(item => `
+                            <tr>
+                                <td>
+                                    <button class="button secondary" onclick="showProductDetail('${item.product._id}')">
+                                        ${item.product.title}
+                                    </button>
+                                </td>
+                                <td>$${item.product.price}</td>
+                                <td>
+                                    <input type="number" value="${item.quantity}" min="1" 
+                                        onchange="updateQuantity('${item.product._id}', this.value)" style="width: 60px; padding: 0.5rem;">
+                                </td>
+                                <td>$${(item.quantity * item.product.price).toFixed(2)}</td>
+                                <td>
+                                    <button class="button danger" onclick="removeFromCart('${item.product._id}')">
+                                        Eliminar
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+                <div class="cart-total">
+                    <div>Total: <span class="amount">$${total.toFixed(2)}</span></div>
+                </div>
+                <div class="cart-actions">
+                    <button class="button secondary" onclick="showSection('products')">Continuar comprando</button>
+                    <button class="button" onclick="checkout()">Proceder al pago</button>
+                    <button class="button danger" onclick="emptyCart()">Vaciar carrito</button>
+                </div>
+            `;
+        }
+
+        // Función para checkout
+        function checkout() {
+            const total = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+            alert(`¡Compra realizada!\n\nTotal: $${total.toFixed(2)}\n\nGracias por tu compra. Recibirás un correo de confirmación.`);
+            cart = [];
+            updateCartCount();
+            renderCart();
+            saveCart();
+        }
+
+        // Inicializar la aplicación
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCart();
+            renderProducts();
+        });
+    </script>
+</body>
+</html>
